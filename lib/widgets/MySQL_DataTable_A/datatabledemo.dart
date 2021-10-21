@@ -1,0 +1,320 @@
+import 'package:flutter/material.dart';
+import 'employees.dart';
+import 'services.dart';
+
+class DataTableDemoA extends StatefulWidget {
+  DataTableDemoA() : super();
+
+  final String title = "TSQuote";
+
+  @override
+  DataTableDemoState createState() => DataTableDemoState();
+}
+
+class DataTableDemoState extends State<DataTableDemoA> {
+  late List<Employee> _employees;
+  late GlobalKey<ScaffoldState> _scaffoldKey;
+  late TextEditingController _Nombre_compController;
+  late TextEditingController _AsuntoController;
+  late TextEditingController _LugarController;
+  late TextEditingController _FechaController;
+  late TextEditingController _HoraController;
+  late Employee _selectedEmployee;
+  late bool _isUpdating;
+  late String _titleProgress;
+
+  @override
+  void initState() {
+    super.initState();
+    _employees = [];
+    _isUpdating = false;
+    _titleProgress = widget.title;
+    _scaffoldKey = GlobalKey();
+    _Nombre_compController = TextEditingController();
+    _AsuntoController = TextEditingController();
+    _LugarController = TextEditingController();
+    _FechaController = TextEditingController();
+    _HoraController = TextEditingController();
+    _getEmployees();
+  }
+
+  _showProgress(String message) {
+    setState(() {
+      _titleProgress = message;
+    });
+  }
+
+  _createTable() {
+    _showProgress('Creating Table...');
+    Services.createTable().then((result) {
+      if ('success' == result) {
+        showSnackBar(context, result);
+        _getEmployees();
+      }
+    });
+  }
+
+  _addEmployee() {
+    if (_Nombre_compController.text
+        .trim()
+        .isEmpty ||
+        _AsuntoController.text
+            .trim()
+            .isEmpty ||
+        _LugarController.text
+            .trim()
+            .isEmpty ||
+        _FechaController.text
+            .trim()
+            .isEmpty ||
+        _HoraController.text
+            .trim()
+            .isEmpty) {
+      print("Empty fields");
+      return;
+    }
+    _showProgress('Adding Employee...');
+    Services.addEmployee(_Nombre_compController.text, _AsuntoController.text,
+        _LugarController.text, _FechaController.text, _HoraController.text)
+        .then((result) {
+      if ('success' == result) {
+        _getEmployees();
+      }
+      _clearValues();
+    });
+  }
+
+  _getEmployees() {
+    _showProgress('Loading Employees...');
+    Services.getEmployees().then((employees) {
+      setState(() {
+        _employees = employees;
+      });
+      _showProgress(widget.title);
+      print("Length: ${employees.length}");
+    });
+  }
+
+  _setValues(Employee employee) {
+    _Nombre_compController.text = employee.Nombre_comp;
+    _AsuntoController.text = employee.Asunto;
+    _LugarController.text = employee.Lugar;
+    _FechaController.text = employee.Fecha;
+    _HoraController.text = employee.Hora;
+    setState(() {
+      _isUpdating = true;
+    });
+  }
+
+  _clearValues() {
+    _Nombre_compController.text = '';
+    _AsuntoController.text = '';
+    _LugarController.text = '';
+    _FechaController.text = '';
+    _HoraController.text = '';
+  }
+
+  SingleChildScrollView _dataBody() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          columns: [
+            DataColumn(
+                label: Text("ID"),
+                numeric: false,
+                tooltip: "Numero de cita."),
+            DataColumn(
+                label: Text(
+                  "Nombre",
+                ),
+                numeric: false,
+                tooltip: "Nombre del Alumno."),
+            DataColumn(
+                label: Text("Asunto"),
+                numeric: false,
+                tooltip: "Asunto de la cita."),
+            DataColumn(
+                label: Text("Lugar"),
+                numeric: false,
+                tooltip: "Lugar de la cita."),
+            DataColumn(
+                label: Text("Fecha"),
+                numeric: false,
+                tooltip: "Fecha de cita."),
+            DataColumn(
+                label: Text("Hora"),
+                numeric: false,
+                tooltip: "Hora de la cita."),
+          ],
+          rows: _employees
+              .map(
+                (employee) => DataRow(
+              cells: [
+                DataCell(
+                  Text(employee.id),
+                  onTap: () {
+                    print("Tapped " + employee.id);
+                    _setValues(employee);
+                    _selectedEmployee = employee;
+                  },
+                ),
+                DataCell(
+                  Text(
+                    employee.Nombre_comp.toUpperCase(),
+                  ),
+                  onTap: () {
+                    print("Tapped " + employee.Nombre_comp);
+                    _setValues(employee);
+                    _selectedEmployee = employee;
+                  },
+                ),
+                DataCell(
+                  Text(
+                    employee.Asunto.toUpperCase(),
+                  ),
+                  onTap: () {
+                    print("Tapped " + employee.Asunto);
+                    _setValues(employee);
+                    _selectedEmployee = employee;
+                  },
+                ),
+                DataCell(
+                  Text(
+                    employee.Lugar.toUpperCase(),
+                  ),
+                  onTap: () {
+                    print("Tapped " + employee.Lugar);
+                    _setValues(employee);
+                    _selectedEmployee = employee;
+                  },
+                ),
+                DataCell(
+                  Text(
+                    employee.Fecha.toUpperCase(),
+                  ),
+                  onTap: () {
+                    print("Tapped " + employee.Fecha);
+                    _setValues(employee);
+                    _selectedEmployee = employee;
+                  },
+                ),
+                DataCell(
+                  Text(
+                    employee.Hora.toUpperCase(),
+                  ),
+                  onTap: () {
+                    print("Tapped " + employee.Hora);
+                    _setValues(employee);
+                    _selectedEmployee = employee;
+                  },
+                ),
+              ],
+            ),
+          )
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  showSnackBar(context, message) {
+    _scaffoldKey.currentState!.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text(_titleProgress),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              _createTable();
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              _getEmployees();
+            },
+          ),
+        ],
+      ),
+      body: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(20.0),
+              child: TextField(
+                controller: _Nombre_compController,
+                decoration: InputDecoration.collapsed(
+                  hintText: "Nombre Completo",
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(20.0),
+              child: TextField(
+                controller: _AsuntoController,
+                decoration: InputDecoration.collapsed(
+                  hintText: "Asunto",
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(20.0),
+              child: TextField(
+                controller: _LugarController,
+                decoration: InputDecoration.collapsed(
+                  hintText: "Lugar",
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(20.0),
+              child: TextField(
+                controller: _FechaController,
+                keyboardType: TextInputType.datetime,
+                decoration: InputDecoration.collapsed(
+                  hintText: "DD/MM/AAAA",
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(20.0),
+              child: TextField(
+                controller: _HoraController,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration.collapsed(
+                  hintText: "HH:MM am/pm",
+                ),
+              ),
+            ),
+            _isUpdating
+                ? Row(
+              children: <Widget>[
+              ],
+            )
+                :
+            Expanded(
+              child: _dataBody(),
+            )
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _addEmployee();
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
