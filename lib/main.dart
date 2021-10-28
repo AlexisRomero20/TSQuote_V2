@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'widgets/MySQL_DataTable_A/datatabledemo.dart';
 import 'widgets/MySQL_DataTable_M/datatabledemo.dart';
+import 'widgets/apimaps/Mapa.dart';
 
 void main() => runApp(MaterialApp(
   home: MyApp(),
@@ -195,6 +196,18 @@ class LoginUserState extends State {
                     padding: EdgeInsets.fromLTRB(9, 9, 9, 9),
                     child: Text('Iniciar'),
                   ),
+                  Container(
+                    child: RaisedButton(
+                      child: Text('Consulta Mapa'),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => InvocMapa()),
+                        );
+                      },
+                    ),
+                  ),
                   Visibility(
                       visible: visible,
                       child: Container(
@@ -250,6 +263,21 @@ class ProfileScreenF extends StatelessWidget {
           brightness: Brightness.dark,
           primaryColor: Colors.green
       ),
+    );
+  }
+}
+
+class InvocMapa extends StatelessWidget {
+// User Logout Function.
+  logout(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MyAppMapa(),
+      theme: ThemeData(brightness: Brightness.dark, primaryColor: Colors.green),
     );
   }
 }
