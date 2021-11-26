@@ -280,6 +280,7 @@ class InvocMapa extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: MyAppMapa(),
       theme: ThemeData(brightness: Brightness.dark, primaryColor: Colors.green),
     );
