@@ -29,7 +29,7 @@ class _MapScreen02State extends State<MapScreen02> {
           GoogleMap(
             onMapCreated: onMapCreated,
             initialCameraPosition:
-            CameraPosition(target: LatLng(40.7128, -74.0060), zoom: 10.0),
+            CameraPosition(target: LatLng(19.058366952059007, -98.15196529988391), zoom: 17.0),
           ),
           Positioned(
             top: 30,

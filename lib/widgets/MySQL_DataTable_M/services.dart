@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import 'employees.dart';
 
 class Services{
-  static const ROOT = 'http://192.168.100.29:80/agendaCita/employee_actions.php';
-  static const String _GET_ACTION = 'GET_ALL';
+  static const ROOT = 'http://192.168.100.15:84/agendaCita/employee_actions.php';
+  static const String _GET_ACTION = 'GET_ALLP';
   static const String _CREATE_TABLE = 'CREATE_TABLE';
   static const String _ADD_EMP_ACTION = 'ADD_EMP';
   static const String _UPDATE_EMP_ACTION = 'UPDATE_EMP';
@@ -15,10 +15,11 @@ class Services{
     return parsed.map<Employee>((json) => Employee.fromJson(json)).toList();
   }
 
-  static Future<List<Employee>> getEmployees() async {
+  static Future<List<Employee>> getEmployees(String correo) async {
     try {
       var map = new Map<String, dynamic>();
       map["action"] = _GET_ACTION;
+      map["filtro"]=correo;
       final response = await http.post(Uri.parse(ROOT), body: map);
       print("getEmployees >> Response:: ${response.body}");
       if (response.statusCode == 200) {
@@ -32,7 +33,7 @@ class Services{
     }
   }
 
-  static Future<String> createTable() async {
+  /*static Future<String> createTable() async {
     try {
       var map = new Map<String, dynamic>();
       map["action"] = _CREATE_TABLE;
@@ -42,13 +43,15 @@ class Services{
     } catch (e) {
       return 'error';
     }
-  }
+  }*/
 
-  static Future<String> addEmployee(String Nombre_comp, String Asunto, String Lugar, String Fecha, String Hora) async {
+  static Future<String> addEmployee(String Nombre_comp, String Correo, String Correo_prof,String Asunto, String Lugar, String Fecha, String Hora) async {
     try {
       var map = new Map<String, dynamic>();
       map["action"] = _ADD_EMP_ACTION;
       map["Nombre_comp"] = Nombre_comp;
+      map["Correo"] = Correo;
+      map["Correo_prof"] = Correo_prof;
       map["Asunto"] = Asunto;
       map["Lugar"] = Lugar;
       map["Fecha"] = Fecha;

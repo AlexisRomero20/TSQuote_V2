@@ -6,6 +6,7 @@ import 'widgets/MySQL_DataTable_M/datatabledemo.dart';
 import 'widgets/apimaps/Mapa.dart';
 
 void main() => runApp(MaterialApp(
+  debugShowCheckedModeBanner: false,
   home: MyApp(),
 ));
 
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
             appBar: AppBar(title: Text('Inicio de Sesion')),
             body: Center(child: LoginUser())));
@@ -42,7 +44,7 @@ class LoginUserState extends State {
     String password = passwordController.text;
 
     // SERVER LOGIN API URL
-    var url = 'http://192.168.100.29:80/agendaCita/login_user.php';
+    var url = 'http://192.168.100.15:84/agendaCita/login_user.php';
 
     // Store all data with Param Name.
     var data = {'email': email, 'password': password};
@@ -234,7 +236,8 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: DataTableDemo(),
+      debugShowCheckedModeBanner: false,
+      home: DataTableDemo(email: email, correo: email,),
       theme: ThemeData(
           brightness: Brightness.dark,
           primaryColor: Colors.green
@@ -258,7 +261,8 @@ class ProfileScreenF extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: DataTableDemoA(),
+      debugShowCheckedModeBanner: false,
+      home: DataTableDemoA(email: email, correo: email,),
       theme: ThemeData(
           brightness: Brightness.dark,
           primaryColor: Colors.green

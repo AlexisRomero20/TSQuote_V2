@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:tsquote/widgets/MySQL_DataTable_A/correos.dart';
 import 'employees.dart';
+import 'correos.dart';
 
 class Services{
   static const ROOT = 'http://192.168.100.29:80/agendaCita/employee_actions.php';
@@ -10,15 +12,24 @@ class Services{
   static const String _UPDATE_EMP_ACTION = 'UPDATE_EMP';
   static const String _DELETE_EMP_ACTION = 'DELETE_EMP';
 
+  static const String _GET_ACTIONC='GET_ALLC';
+
   static List<Employee> parsePhotos(String responseBody) {
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
     return parsed.map<Employee>((json) => Employee.fromJson(json)).toList();
   }
 
-  static Future<List<Employee>> getEmployees() async {
+  static List<Correo> parseCorreos(String responseBody) {
+    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+    return parsed.map<Correo>((json) => Correo.fromJson(json)).toList();
+  }
+
+
+  static Future<List<Employee>> getEmployees(String correo) async {
     try {
       var map = new Map<String, dynamic>();
       map["action"] = _GET_ACTION;
+      map["filtro"]=correo;
       final response = await http.post(Uri.parse(ROOT), body: map);
       print("getEmployees >> Response:: ${response.body}");
       if (response.statusCode == 200) {
@@ -32,6 +43,7 @@ class Services{
     }
   }
 
+  /*
   static Future<String> createTable() async {
     try {
       var map = new Map<String, dynamic>();
@@ -43,12 +55,15 @@ class Services{
       return 'error';
     }
   }
+  */
 
-  static Future<String> addEmployee(String Nombre_comp, String Asunto, String Lugar, String Fecha, String Hora) async {
+  static Future<String> addEmployee(String Nombre_comp, String Correo, String Correo_prof,String Asunto, String Lugar, String Fecha, String Hora) async {
     try {
       var map = new Map<String, dynamic>();
       map["action"] = _ADD_EMP_ACTION;
       map["Nombre_comp"] = Nombre_comp;
+      map["Correo"] = Correo;
+      map["Correo_prof"] = Correo_prof;
       map["Asunto"] = Asunto;
       map["Lugar"] = Lugar;
       map["Fecha"] = Fecha;
@@ -75,6 +90,23 @@ class Services{
       return response.body;
     } catch (e) {
       return 'error';
+    }
+  }
+
+  static Future<List<Correo>> getCorreos() async {
+    try {
+      var map = new Map<String, dynamic>();
+      map["action"] = _GET_ACTIONC;
+      final response = await http.post(Uri.parse(ROOT), body: map);
+      print("getCorreos >> Response:: ${response.body}");
+      if (response.statusCode == 200) {
+        List<Correo> listC = parseCorreos(response.body);
+        return listC;
+      } else {
+        throw <Correo>[];
+      }
+    } catch (e) {
+      return <Correo>[];
     }
   }
 
